@@ -87,8 +87,9 @@ ballot <-- (enc_v, Пi)
 
 sign <-- Sign(ballot, pk)
 
+PublishOnWBB(Sign, Пi)
 
-return (sign)
+return (sign, Пi)
 
 
 output: sign - signed ballot
@@ -128,6 +129,7 @@ input: signature - signature to be verified,
 	message - original message,
 	pK - key to verify the signature
 
+(k, s) <-- signature
 
 (p, y, g) <-- pK
 

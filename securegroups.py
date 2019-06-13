@@ -26,10 +26,15 @@ def get_random_up_to_nbits(nBits):
 def get_random_up_to(max):
 	seed = int(time.time()*1000.0)
 	rand_state = gmpy2.random_state(seed)
-	print(rand_state, max)
 	r = gmpy2.mpz_random(rand_state, max)
 
 	return r
+
+def get_random_in_range(min, max):
+	seed = int(time.time()*1000.0)
+	rand_state = gmpy2.random_state(seed)
+	r = gmpy2.mpz_random(rand_state, 1 + max - min)
+	return min + r
 
 #sets value field of an element object as a random value
 def set_random_value(elem):

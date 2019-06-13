@@ -1,3 +1,5 @@
+
+
 #prove knowledge of exponent of PK=g^{SK}
 def proof_of_knowledge_sk(pk, sk):
 
@@ -17,7 +19,7 @@ def proof_of_knowledge_sk(pk, sk):
 
 	return proof
 
-
+#verify knowledge given
 def verify_knowledge_sk(pk, proof):
 	g = pk.parameters.g
 	p = pk.parameters.p
@@ -29,4 +31,4 @@ def verify_knowledge_sk(pk, proof):
 	cmp2.value = gmpy2.powmod(pk.value, hashed, p)
 	mul_el(cmp2, proof.a.value, cmp2.value)
 
-	return cmp1.value == cmp2.valu
+	return cmp1.value == cmp2.value

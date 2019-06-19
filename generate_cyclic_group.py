@@ -1,5 +1,5 @@
 from settings import *
-from securegroups import *
+from helpers import get_random_up_to_nbits, get_random_up_to
 import gmpy2
 import time
 

@@ -1,8 +1,8 @@
-
+from settings import *
+from helpers import get_hash_of_elements, add_el, mul_el
 
 #prove knowledge of exponent of PK=g^{SK}
 def proof_of_knowledge_sk(pk, sk):
-
 	g = sk.parameters.g
 	p = sk.parameters.p
 	r = Element(type_Z)
@@ -14,12 +14,11 @@ def proof_of_knowledge_sk(pk, sk):
 	hashed = get_hash_of_elements(g, pk.value, a.value)
 	mul_el(z, hashed, sk.value)
 	add_el(z, z.value, r.value)
-
 	proof = PoK(a, z)
 
 	return proof
 
-#verify knowledge given
+#verify given PoK knowledge
 def verify_knowledge_sk(pk, proof):
 	g = pk.parameters.g
 	p = pk.parameters.p

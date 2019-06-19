@@ -7,11 +7,10 @@ type_G = 0 #element is in the group
 type_Z = 1 #element is in the exponent space
 security_level = 512
 tellers = 3
-parameters = Parameters()
-
 number_of_voters = 3
 min_track = 1
 max_track = 500
+parameters = Parameters()
 
 #test!! parameters
 parameters.p = 19305903377918504234644571620401875817331760586110570595520480093810293868972888209674086377348699019232495477695433624750552102068492069355914600302950327
@@ -24,6 +23,11 @@ class Element(object):
 		self.type = type
 		self.value = value
 		self.parameters = parameters
+
+class Keys(object):
+	def __init__(self, pk=None, sk=None):
+		self.pk = pk
+		self.sk = sk
 
 class PoK(object):
 	def __init__(self, a=None, z=None, parameters=parameters):

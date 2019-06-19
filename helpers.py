@@ -1,19 +1,9 @@
 import gmpy2
 import time
+import hashlib
+import binascii
+from Crypto.Hash import SHA256
 from settings import *
-
-#returns dictionary with public and secret key from parameters
-def generate_keys():
-	PK = Element(type_G)
-	SK = Element(type_Z)
-	g = PK.parameters.g
-	p = PK.parameters.p
-
-	set_random_value(SK)
-	PK.value = gmpy2.powmod(g, SK.value, p)
-	print('Your public key is:', PK.value, 'Your secret key is:', SK.value)
-	
-	return {'pk' : PK, 'sk' : SK}
 
 #returns a uniformly distributed random integer between 0 and 2**nBits - 1. 
 def get_random_up_to_nbits(nBits):
@@ -34,6 +24,7 @@ def get_random_in_range(min, max):
 	seed = int(time.time()*1000.0)
 	rand_state = gmpy2.random_state(seed)
 	r = gmpy2.mpz_random(rand_state, 1 + max - min)
+
 	return min + r
 
 #sets value field of an element object as a random value
@@ -51,6 +42,7 @@ def set_random_value(elem):
 #concatenates and hashes arguments passed to the function, returns hash in decimal representation
 def get_hash_of_elements(*args):
 	concat = ''
+
 	for arg in args:
 		concat += str(arg)
 	concat = concat.encode('UTF-8')
@@ -58,18 +50,7 @@ def get_hash_of_elements(*args):
 	
 	return int(hashed_hex, 16)
 
-#generates dictionary with public and secret key
-def generate_keys():
-	PK = Element(type_G)
-	SK = Element(type_Z)
-	g = PK.parameters.g
-	p = PK.parameters.p
-
-	set_random_value(SK)
-	PK.value = gmpy2.powmod(g, SK.value, p)
-	print('Your public key is:', PK.value, 'Your secret key is:', SK.value)
-	
-	return {'pk' : PK, 'sk' : SK}
+get_hash_of_elements(1, 2, 3)
 
 #adds 2 elements + mod p/q depending on the result type
 #and sets result.value field to result, first argument should be be an Element object
@@ -89,11 +70,37 @@ def mul_el(result, el1, el2):
 	result.value = gmpy2.mul(el1, el2)
 	result.value = (gmpy2.f_mod(result.value, p), gmpy2.f_mod(result.value, q))[result.type]
 
-#divides 2 elements similar to add_el function
+#divides 2 elements (inverts second element and multiplies
+#it with the first one), then sets result.value to result of division
 def div_el(result, el1, el2):
 	p = result.parameters.p
 	q = result.parameters.q
+	tmp = Element(type_G, el2)
 
-	result.value = gmpy2.add(el1, el2)
+	tmp.value = (gmpy2.invert(tmp.value, p), gmpy2.invert(tmp.value, q))[result.type]
+	result.value = gmpy2.mul(el1, tmp.value)
 	result.value = (gmpy2.f_mod(result.value, p), gmpy2.f_mod(result.value, q))[result.type]
+
+#decodes string to number (may not work for some big integers)
+def string_to_number(string):
+	byte_str = string.encode("utf-8")
+	byte_to_hex = binascii.hexlify(byte_str)
+	integer = int(byte_to_hex, 16)
+
+	return integer
+
+#decodes integer to a string
+def number_to_string(number):
+	formatted_number = format(number, "x")
+	if len(formatted_number) % 2 == 1:
+		formatted_number = '0' + formatted_number
+	encoded_number = formatted_number.encode("utf-8")
+	hex_number = binascii.unhexlify(encoded_number)
+	string = hex_number.decode("utf-8")
+
+	return string
+
+
+
+
 

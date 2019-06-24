@@ -1,3 +1,8 @@
+class Parameters:
+	p = None,
+	g = None,
+	q = None
+
 type_G = 0 #element is in the group
 type_Z = 1 #element is in the exponent space
 security_level = 512
@@ -5,12 +10,6 @@ tellers = 3
 number_of_voters = 3
 min_track = 1
 max_track = 500
-
-class Parameters:
-	p = None,
-	g = None,
-	q = None
-	
 parameters = Parameters()
 
 # test!! parameters

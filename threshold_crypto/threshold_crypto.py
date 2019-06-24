@@ -479,7 +479,7 @@ class ThresholdCrypto:
         return public_key, shares
 
     @staticmethod
-    def encrypt_message(message: str, public_key: PublicKey) -> EncryptedMessage:
+    def encrypt_message(public_key: PublicKey, message: str) -> EncryptedMessage:
         """
         Encrypt a message using a public key. A hybrid encryption approach is used to include advantages of symmetric
         encryption (fast, independent of message-length, integrity-preserving by using AE-scheme).
@@ -490,12 +490,12 @@ class ThresholdCrypto:
         :return: an encrypted message
         """
         encoded_message = bytes(message, 'utf-8')
-        key_params = public_key.key_parameters
+        key_params = public_key.parameters
 
         # Create random subgroup element and use its hash as symmetric key to prevent
         # attacks described in "Why Textbook ElGamal and RSA Encryption Are Insecure"
         # by Boneh et. al.
-        r = number.getRandomRange(2, public_key.key_parameters.q)
+        r = number.getRandomRange(2, key_params.q)
         key_subgroup_element = pow(key_params.g, r, key_params.p)
         key_subgroup_element_byte_length = (key_subgroup_element.bit_length() + 7) // 8
         element_bytes = key_subgroup_element.to_bytes(key_subgroup_element_byte_length, byteorder='big')
@@ -518,90 +518,14 @@ class ThresholdCrypto:
 
     @staticmethod
     def _encrypt_key_element(key_element: int, public_key: PublicKey) -> (int, int):
-        key_params = public_key.key_parameters
+        key_params = public_key.parameters
 
         if key_element >= key_params.p:
             raise ThresholdCryptoError('key element is larger than key parameter p')
 
         k = number.getRandomRange(1, key_params.q - 1)
         g_k = pow(key_params.g, k, key_params.p) # aka v
-        g_ak = pow(public_key.g_a, k, key_params.p)
+        g_ak = pow(public_key.value, k, key_params.p)
         c = (key_element * g_ak) % key_params.p
 
         return g_k, c
-
-    @staticmethod
-    def compute_partial_decryption(encrypted_message: EncryptedMessage, key_share: KeyShare) -> PartialDecryption:
-        """
-        Compute a partial decryption of an encrypted message using a key share.
-
-        :param encrypted_message: the encrypted message
-        :param key_share: the key share
-        :return: a partial decryption
-        """
-        key_params = key_share.key_parameters
-
-        v_y = pow(encrypted_message.v, key_share.y, key_params.p)
-
-        return PartialDecryption(key_share.x, v_y)
-
-    @staticmethod
-    def decrypt_message(partial_decryptions: [PartialDecryption],
-                        encrypted_message: EncryptedMessage,
-                        threshold_params: ThresholdParameters,
-                        key_params: KeyParameters
-                        ) -> str:
-        """
-        Decrypt a message using the combination of at least t partial decryptions. Similar to the encryption process
-        the hybrid approach is used for decryption.
-
-        :param partial_decryptions: at least t partial decryptions
-        :param encrypted_message: the encrapted message to be decrypted
-        :param threshold_params: the used threshold parameters
-        :param key_params: the used key parameters
-        :return: the decrypted message
-        """
-        key_subgroup_element = ThresholdCrypto._combine_shares(
-            partial_decryptions,
-            encrypted_message,
-            threshold_params,
-            key_params
-        )
-        key_subgroup_element_byte_length = (key_subgroup_element.bit_length() + 7) // 8
-        key_subgroup_element_bytes = key_subgroup_element.to_bytes(key_subgroup_element_byte_length, byteorder='big')
-
-        try:
-            key = nacl.hash.blake2b(key_subgroup_element_bytes,
-                                    digest_size=nacl.secret.SecretBox.KEY_SIZE,
-                                    encoder=nacl.encoding.RawEncoder)
-            box = nacl.secret.SecretBox(key)
-            encoded_plaintext = box.decrypt(bytes.fromhex(encrypted_message.enc))
-        except nacl.exceptions.CryptoError as e:
-            raise ThresholdCryptoError('Message decryption failed. Internal: ' + str(e))
-
-        return str(encoded_plaintext, 'utf-8')
-
-    @staticmethod
-    def _combine_shares(partial_decryptions: [PartialDecryption],
-                       encrypted_message: EncryptedMessage,
-                       threshold_params: ThresholdParameters,
-                       key_params: KeyParameters
-                       ) -> int:
-        # Disabled to enable testing for unsuccessful decryption
-        # if len(partial_decryptions) < threshold_params.t:
-        #    raise ThresholdCryptoError('less than t partial decryptions given')
-
-        # compute lagrange coefficients
-        partial_indices = [dec.x for dec in partial_decryptions]
-        lagrange_coefficients = number.build_lagrange_coefficients(partial_indices, key_params.q)
-
-        factors = [
-            pow(partial_decryptions[i].v_y, lagrange_coefficients[i], key_params.p)
-            for i in range(0, len(partial_decryptions))
-        ]
-        restored_g_ka = number.prod(factors) % key_params.p
-        restored_g_minus_ak = number.prime_mod_inv(restored_g_ka, key_params.p)
-        restored_m = encrypted_message.c * restored_g_minus_ak % key_params.p
-
-        return restored_m
-

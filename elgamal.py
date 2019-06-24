@@ -51,7 +51,7 @@ def elgamal_dec_int(sk, cipher):
 
 	return msg.value
 
-#decrypts STRING given array with ciphertexts for each symbol
+#decrypts array with ciphertexts and returns STRING
 def elgamal_dec(sk, cipher_arr):
 	plaintext = ''
 

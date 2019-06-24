@@ -1,4 +1,4 @@
-pynacl
+nacl
 gmpy2
 hashlib
 time

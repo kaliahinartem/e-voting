@@ -1,6 +1,6 @@
 from settings import *
+from data_structures import *
 from threshold_crypto import (ThresholdCrypto, ThresholdParameters)
-
 
 #creates public key and shared keys for number of tellers
 def threshold():
@@ -13,5 +13,3 @@ def threshold():
 	return PK, key_shares
 
 threshold()
-
-

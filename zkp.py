@@ -1,4 +1,5 @@
 from settings import *
+from data_structures import *
 from helpers import get_hash_of_elements, add_el, mul_el
 
 #prove knowledge of exponent of PK=g^{SK}

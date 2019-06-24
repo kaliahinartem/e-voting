@@ -1,7 +1,14 @@
+import gmpy2
+import string
+import time
 from settings import *
-from helpers import set_random_value, mul_el, div_el
+from data_structures import *
+from helpers import *
+from keygen import generate_keys
+from generate_cyclic_group import generate_group
 
-#elgamal encryption of given integer
+
+#elgamal encryption of given INTEGER
 #returns Cipher object with (a, b) encryption terms
 def elgamal_enc_int(pk, message):
 	p = pk.parameters.p
@@ -18,19 +25,7 @@ def elgamal_enc_int(pk, message):
 
 	return cipher
 
-#elgamal decryption of given ciphertext
-#returns decrypted integer
-def elgamal_dec_int(sk, cipher):
-	p = sk.parameters.p
-	g = sk.parameters.g
-	msg = Element(type_G)
-
-	msg.value = gmpy2.powmod(cipher.a.value, sk.value, p)
-	div_el(msg, cipher.b.value, msg.value)
-
-	return msg.value
-
-#elgamal encryption of string
+#elgamal encryption of STRING
 #returns array of ciphers for each ascii symbol in the string
 def elgamal_enc(pk, message):
 	if type(message) is not str:
@@ -44,8 +39,19 @@ def elgamal_enc(pk, message):
 
 	return cipher_arr
 
+#elgamal decryption of given ciphertext
+#returns decrypted INTEGER
+def elgamal_dec_int(sk, cipher):
+	p = sk.parameters.p
+	g = sk.parameters.g
+	msg = Element(type_G)
 
-#decrypts string given array with ciphertexts for each symbol
+	msg.value = gmpy2.powmod(cipher.a.value, sk.value, p)
+	div_el(msg, cipher.b.value, msg.value)
+
+	return msg.value
+
+#decrypts STRING given array with ciphertexts for each symbol
 def elgamal_dec(sk, cipher_arr):
 	plaintext = ''
 

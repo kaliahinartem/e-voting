@@ -2,8 +2,8 @@ import gmpy2
 import time
 import hashlib
 import binascii
-from Crypto.Hash import SHA256
 from settings import *
+from data_structures import *
 
 #returns a uniformly distributed random integer between 0 and 2**nBits - 1. 
 def get_random_up_to_nbits(nBits):

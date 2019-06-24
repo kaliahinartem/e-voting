@@ -1,4 +1,5 @@
 from settings import *
+from data_structures import *
 from helpers import get_random_up_to_nbits, get_random_up_to
 import gmpy2
 import time
@@ -21,8 +22,6 @@ def generate_group():
 		parameters.g = get_random_up_to(parameters.p)
 		if gmpy2.powmod(parameters.g, parameters.q, parameters.p) == 1:
 			break
-
-generate_group()
 
 # def test_group_values(params):
 # 	if gmpy2.is_bpsw_prp(params.p) and gmpy2.is_bpsw_prp(params.q):

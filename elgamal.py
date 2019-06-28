@@ -8,6 +8,10 @@ from keygen import generate_keys
 from generate_cyclic_group import generate_group
 
 
+from sign import sign, verify_sign
+
+
+
 #elgamal encryption of given INTEGER
 #returns Cipher object with (a, b) encryption terms
 def elgamal_enc_int(pk, message):

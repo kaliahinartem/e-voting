@@ -66,5 +66,9 @@ class PartialDecryption:
 	def __str__(self):
 		return 'PartialDecryption:\n\tid = %s\n\tv_y = %s' % (str(self.v), str(self.c), str(self.enc))
 
-
+class Signature(object):
+	def __init__(self, k=None, s=None):
+		self.k = k
+		self.s = s
+		
 

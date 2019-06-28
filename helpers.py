@@ -62,6 +62,13 @@ def add_el(result, el1, el2):
 	result.value = gmpy2.add(el1, el2)
 	result.value = (gmpy2.f_mod(result.value, p), gmpy2.f_mod(result.value, q))[result.type]
 
+def sub_el(result, el1, el2):
+	p = result.parameters.p
+	q = result.parameters.q
+
+	result.value = gmpy2.sub(el1, el2)
+	result.value = (gmpy2.f_mod(result.value, p), gmpy2.f_mod(result.value, q))[result.type]
+
 #multiplies 2 elements similar to add_el function
 def mul_el(result, el1, el2):
 	p = result.parameters.p

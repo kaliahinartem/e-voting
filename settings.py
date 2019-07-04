@@ -3,10 +3,10 @@ class Parameters:
 	g = None,
 	q = None
 
-type_G = 0 #element is in the group
-type_Z = 1 #element is in the exponent space
-security_level = 512
-tellers = 3
+type_G = 0
+type_Z = 1
+nBits = 512
+number_of_tellers = 3
 number_of_voters = 3
 min_track = 1
 max_track = 500

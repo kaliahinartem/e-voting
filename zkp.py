@@ -2,13 +2,16 @@ from settings import *
 from data_structures import *
 from helpers import get_hash_of_elements, add_el, mul_el
 
-#prove knowledge of exponent of PK=g^{SK}
 def proof_of_knowledge_sk(pk, sk):
+	"""
+	prove knowledge of exponent of PK=g^{sk}
+	returns PoK object
+	"""
 	g = sk.parameters.g
 	p = sk.parameters.p
-	r = Element(type_Z)
-	z = Element(type_Z)
-	a = Element(type_G)
+	r = El(type_Z)
+	z = El(type_Z)
+	a = El(type_G)
 	set_random_value(r)
 
 	a.value = gmpy2.powmod(g, r.value, p)
@@ -19,12 +22,15 @@ def proof_of_knowledge_sk(pk, sk):
 
 	return proof
 
-#verify given PoK knowledge
 def verify_knowledge_sk(pk, proof):
+	"""
+	verify given PoK knowledge
+	returns true/false
+	"""
 	g = pk.parameters.g
 	p = pk.parameters.p
-	cmp1 = Element(type_G)
-	cmp2 = Element(type_G)
+	cmp1 = El(type_G)
+	cmp2 = El(type_G)
 
 	hashed = get_hash_of_elements(g, pk.value, proof.a.value)
 	cmp1.value = gmpy2.powmod(g, proof.z.value, p)

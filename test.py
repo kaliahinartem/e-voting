@@ -18,7 +18,6 @@ def test_elgamal_enc_int():
 				print('Error!')
 
 	# elgamal_encrypt_integer = elgamal_enc_int(keys.pk, 10843928409375912850921834897798)
-	# elgamal_decrypt_integer = 
 def generate_random_string():
 	string_of_symbols = string.printable
 	random_length = get_random_in_range(1, 25)
